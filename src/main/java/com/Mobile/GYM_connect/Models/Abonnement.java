@@ -14,6 +14,7 @@ import java.time.LocalDate;
 
 @Entity
 @Schema(description = "Représente un abonnement souscrit par un membre.") // Description pour la classe entière
+@Table(name = "abonnement") // Nom de la table
 public class Abonnement {
 
     @Id
@@ -52,6 +53,10 @@ public class Abonnement {
     @Column(precision = 10, scale = 2)
     @Schema(description = "Montant de la remise appliquée (si applicable).", example = "5.00")
     private BigDecimal remis; // Peut-être "remise" ?
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "client_id", nullable = false)
+    private Client client;
 
 
 

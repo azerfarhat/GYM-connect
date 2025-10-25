@@ -1,7 +1,7 @@
 package com.Mobile.GYM_connect.Controller; // Adaptez le package si besoin
 
 import com.Mobile.GYM_connect.Models.Abonnement;
-import com.Mobile.GYM_connect.repository.AbonnementRepository;
+import com.Mobile.GYM_connect.Repository.AbonnementRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -29,13 +29,11 @@ public class AbonnementController {
             content = { @Content(mediaType = "application/json",
                     schema = @Schema(implementation = Abonnement.class)) })
     public Abonnement createAbonnement(@RequestBody Abonnement abonnement) {
-        // Le @RequestBody transforme automatiquement le JSON reçu en un objet Java Abonnement
-        // La méthode save() du repository sauvegarde l'objet en base de données et retourne l'objet sauvegardé (avec son ID)
         return abonnementRepository.save(abonnement);
     }
 
 
-    @GetMapping
+    @GetMapping("all")
     @Operation(summary = "Récupérer la liste de tous les abonnements")
     public List<Abonnement> getAllAbonnements() {
         return abonnementRepository.findAll();
