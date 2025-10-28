@@ -36,8 +36,7 @@ public class ClientService {
         String hashedPassword = passwordEncoder.encode(client.getMotDePasse());
         client.setMotDePasse(hashedPassword);
 
-        // Attribution d'un rôle par défaut
-        client.setRole(Role.CLIENT.name());
+        client.setRole(Role.CLIENT);
 
         return clientRepository.save(client);
     }

@@ -2,6 +2,7 @@ package com.Mobile.GYM_connect.Models; // Adaptez le package si besoin
 
 import com.Mobile.GYM_connect.Enums.StatutAbonnement;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.FutureOrPresent;
@@ -22,12 +23,8 @@ public class Abonnement {
     @Schema(description = "Identifiant unique de l'abonnement, généré automatiquement.", accessMode = Schema.AccessMode.READ_ONLY) // En lecture seule
     private Long id;
 
-    @NotBlank // Indique que ce champ ne peut pas être vide ou nul (validation + Swagger)
-    @Column(nullable = false, length = 50)
-    @Schema(description = "Type de l'abonnement.", example = "Mensuel Classique")
-    private String type;
 
-    @NotNull // Doit être fourni
+    @NotNull
     @FutureOrPresent // La date doit être aujourd'hui ou dans le futur
     @Schema(description = "Date de début de validité de l'abonnement.", example = "2024-10-21")
     private LocalDate dateDebut;
@@ -43,24 +40,32 @@ public class Abonnement {
     @Schema(description = "Statut actuel de l'abonnement.", example = "ACTIF")
     private StatutAbonnement statut;
 
-    @NotNull // Doit être fourni
-    @PositiveOrZero // Le montant ne peut pas être négatif
-    @Column(precision = 10, scale = 2)
-    @Schema(description = "Montant total payé pour l'abonnement.", example = "29.99")
-    private BigDecimal montant;
-
-    @PositiveOrZero // La remise ne peut pas être négative
-    @Column(precision = 10, scale = 2)
-    @Schema(description = "Montant de la remise appliquée (si applicable).", example = "5.00")
-    private BigDecimal remis; // Peut-être "remise" ?
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "client_id", nullable = false)
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "abonnements", "reservation"})
     private Client client;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "type_abonnement_id", nullable = false)
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"}) // Pour bien gérer la conversion JSON avec LAZY loading
+    private TypeAbonnement typeAbonnement;
 
 
 
     public Abonnement() {}
+
+    public TypeAbonnement getTypeAbonnement() {
+        return typeAbonnement;
+    }
+
+    public void setTypeAbonnement(TypeAbonnement typeAbonnement) {
+        this.typeAbonnement = typeAbonnement;
+    }
+
+
+    public void setClient(Client client) {
+        this.client = client;
+    }
 
     public Long getId() {
         return id;
@@ -68,22 +73,6 @@ public class Abonnement {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public BigDecimal getRemis() {
-        return remis;
-    }
-
-    public void setRemis(BigDecimal remis) {
-        this.remis = remis;
-    }
-
-    public BigDecimal getMontant() {
-        return montant;
-    }
-
-    public void setMontant(BigDecimal montant) {
-        this.montant = montant;
     }
 
     public StatutAbonnement getStatut() {
@@ -102,13 +91,6 @@ public class Abonnement {
         this.dateFin = dateFin;
     }
 
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
 
     public LocalDate getDateDebut() {
         return dateDebut;
